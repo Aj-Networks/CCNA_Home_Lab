@@ -1,0 +1,9 @@
+# Scripts
+
+Automation helpers for lab workflow.
+
+Ideas:
+- `backup-configs.sh`: SSH to devices, save running-config
+- `deploy-config.py`: Push config snippets to devices
+- `verify-connectivity.py`: Ping/trace test across topology
+- `progress-update.py`: Update progress tracking CSV
