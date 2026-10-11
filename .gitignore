@@ -1,0 +1,43 @@
+﻿# Claude Code session files (kept local-only)
+CLAUDE.md
+.claude/
+
+# Copyrighted Cisco NetAcad materials (NOT for public repo)
+local_materials/
+
+# Large binary files
+*.pka
+*.pkt
+*.iso
+*.ova
+*.ovf
+
+# Local credentials / secrets
+*secret*
+*credential*
+*.pem
+*.key
+*password*
+
+# Windows cruft
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# macOS cruft
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor and IDE cruft
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Draw.io backup files
+*.drawio.bkp

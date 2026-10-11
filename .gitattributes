@@ -1,0 +1,13 @@
+﻿# Normalize line endings across platforms
+* text=auto eol=lf
+
+# Binary formats: do not touch
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.pka binary
+*.pkt binary
+*.drawio binary
+*.svg text eol=lf
