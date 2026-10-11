@@ -1,0 +1,13 @@
+# Progress Tracking
+
+Track module/lab completion.
+
+Formats: `progress.csv`, `progress.json`, or `progress.md`
+
+Example `progress.csv`:
+```csv
+course,module,topic,status,date,notes
+ITN,1,Network Fundamentals,done,2026-10-10,
+ITN,2,Basic Switch Config,in_progress,2026-10-10,
+SRWE,3,VLANs & Trunking,pending,, 
+```
