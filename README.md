@@ -1,29 +1,40 @@
-﻿# CCNA Home Lab
+# CCNA Home Lab
 
-Personal CCNA exam preparation lab. Built on physical hardware (same devices as [Homelab_Router-on-a-Stick](https://github.com/Aj-Networks/Homelab_Router-on-a-Stick)) but logically isolated for focused study.
+Personal CCNA 200-301 exam preparation lab. Built on physical hardware (same devices as [Homelab_Router-on-a-Stick](https://github.com/Aj-Networks/Homelab_Router-on-a-Stick)) but logically isolated for focused study.
 
 ## Purpose
 
-This repository hosts original study notes, lab writeups, topology diagrams, config snippets, and automation scripts produced while preparing for the Cisco CCNA 200-301 certification. Everything here is written from scratch and reflects personal interpretation of the material.
-
-## Using this repository
-
-Clone or download the repo and browse `docs/` for notes and lab writeups. Topology sources live under `docs/topologies/` (drawio and svg). Configuration snippets live under `configs/`. Automation helpers live under `scripts/`.
+Each topic lives in its own numbered folder at the root of this repo. One folder, one topic, one writeup. No jumping between separate notes, labs, and diagram trees. Everything about a topic is in that topic's folder.
 
 ## Structure
 
 ```
+├── 00-template-topic/            # Copy this folder to start a new topic
+│   └── README.md
+├── NN-topic-slug/                # One per lab or concept
+│   ├── README.md                 # Writeup: concept, lab, sources, comments, lessons
+│   ├── topology.drawio           # Optional: your own topology source
+│   ├── topology.svg              # Optional: exported diagram
+│   ├── lab.pka                   # Optional: your own Packet Tracer file
+│   └── config-r1.txt             # Optional: config snippets or screenshots
 ├── docs/
-│   ├── study-notes/      # Personal markdown notes per module/topic
-│   ├── lab-summaries/    # Lab writeups with configs, outputs, lessons
-│   ├── cheatsheets/      # Quick-reference cards (subnetting, CLI, etc.)
-│   ├── topologies/       # Network diagrams (drawio, svg, png)
-│   └── sync_audits/      # Repo audit reports (local vs remote reconciliation)
-├── configs/              # Reusable config snippets (router, switch, WLAN)
-├── scripts/              # Automation helpers (backup, deploy, test)
-├── progress/             # Tracking: CSV/JSON for module completion
-└── screenshots/          # Lab evidence screenshots
+│   └── sync_audits/              # Repo reconciliation history
+├── LICENSE
+└── README.md
 ```
+
+## How to add a new topic
+
+1. Copy `00-template-topic/` to a new folder named `NN-topic-slug/` (two-digit number, hyphen, lowercase slug). Example: `11-ipv4-addressing/`.
+2. Fill in each section of its README.
+3. Drop related files (topology, PT file, config snippet, screenshots) directly inside the same folder.
+4. Commit with a short specific message, e.g. `add 11 ipv4-addressing lab writeup`.
+
+Note: `.pka`, `.pkt`, and other binary lab formats are globally ignored in [.gitignore](.gitignore). To publish your own `.pka` for a specific topic, add an exception line such as `!11-ipv4-addressing/lab.pka`.
+
+## Numbering convention
+
+Numbers follow Cisco NetAcad module order as a sort prefix only, not a deep hierarchy. Example: `11-ipv4-addressing`, `20-vpn-tunneling`. Familiar order, no replication of the full `1.1.1.5` scheme.
 
 ## Progress Tracking
 
