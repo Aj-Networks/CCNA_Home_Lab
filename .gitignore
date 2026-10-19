@@ -12,6 +12,9 @@ local_materials/
 *.ova
 *.ovf
 
+# Allow my own Packet Tracer files inside the labs tree
+!labs/**/lab.pka
+
 # Local credentials / secrets
 *secret*
 *credential*
