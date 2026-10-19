@@ -15,6 +15,7 @@
     --code-fg: #1f2328;
     --block-bg: #0d1117;
     --block-fg: #e6edf3;
+    --prompt: #7ee787;
     --table-stripe: #f6f8fa;
     --warn: #9a6700;
     --warn-bg: #fff8c5;
@@ -32,6 +33,7 @@
       --code-fg: #e6edf3;
       --block-bg: #010409;
       --block-fg: #e6edf3;
+      --prompt: #7ee787;
       --table-stripe: #161b22;
       --warn: #d29922;
       --warn-bg: #3d2e04;
@@ -49,6 +51,7 @@
     --code-fg: #e6edf3;
     --block-bg: #010409;
     --block-fg: #e6edf3;
+    --prompt: #7ee787;
     --table-stripe: #161b22;
     --warn: #d29922;
     --warn-bg: #3d2e04;
@@ -58,7 +61,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; line-height: 1.6; font-size: 16px; }
-  main { max-width: 920px; margin: 0 auto; padding: 32px 16px 80px; }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 80px; }
   h1 { font-size: 2em; margin: 0 0 0.3em; padding-bottom: 0.3em; border-bottom: 1px solid var(--border); }
   h2 { font-size: 1.5em; margin: 1.8em 0 0.5em; padding-bottom: 0.2em; border-bottom: 1px solid var(--border); }
   h3 { font-size: 1.2em; margin: 1.4em 0 0.4em; }
@@ -66,8 +69,9 @@
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   code { background: var(--code-bg); color: var(--code-fg); padding: 0.15em 0.4em; border-radius: 4px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.92em; }
-  pre { background: var(--block-bg); color: var(--block-fg); padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.88em; line-height: 1.45; margin: 0.8em 0; }
+  pre { background: var(--block-bg); color: var(--block-fg); padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.88em; line-height: 1.5; margin: 0.8em 0; }
   pre code { background: transparent; color: inherit; padding: 0; }
+  pre .p { color: var(--prompt); user-select: none; }
   table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 0.95em; }
   th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
   th { background: var(--code-bg); font-weight: 600; }
@@ -86,14 +90,17 @@
   .toc ol { margin: 0; padding-left: 1.4em; }
   .checklist { list-style: none; padding-left: 0.3em; }
   .checklist li::before { content: "☐ "; color: var(--muted); margin-right: 4px; }
+  figure { margin: 1em 0; text-align: center; }
+  figure img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; }
+  figcaption { font-size: 0.88em; color: var(--muted); margin-top: 6px; }
   hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
   .theme-toggle { position: fixed; top: 14px; right: 14px; background: var(--code-bg); border: 1px solid var(--border); color: var(--fg); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85em; }
   @media (max-width: 600px) {
     main { padding: 20px 12px 60px; }
     h1 { font-size: 1.6em; }
     h2 { font-size: 1.3em; }
-    pre { font-size: 0.82em; }
-    table { font-size: 0.88em; }
+    pre { font-size: 0.78em; }
+    table { font-size: 0.86em; }
     th, td { padding: 6px 8px; }
   }
 </style>
@@ -107,7 +114,7 @@
 <div class="meta">
 <table>
 <tr><th>Document type</th><td>Standard Operating Procedure</td></tr>
-<tr><th>Version</th><td>1.0</td></tr>
+<tr><th>Version</th><td>1.1</td></tr>
 <tr><th>Date</th><td>2026-10-18</td></tr>
 <tr><th>Scenario</th><td>Two private LANs connected across a public ISP with eavesdropper on the WAN</td></tr>
 <tr><th>Equipment</th><td>Cisco Packet Tracer 8.2+, ISR4331 routers</td></tr>
@@ -115,6 +122,8 @@
 <tr><th>Audience</th><td>Experienced engineer refreshing CCNA / ENSA material</td></tr>
 </table>
 </div>
+
+<div class="note"><strong>About the CLI blocks below:</strong> every line shows the live Cisco IOS prompt (<code>Router&gt;</code>, <code>Router#</code>, <code>HQ-Router(config)#</code>, <code>HQ-Router(config-if)#</code>, etc.) so you can see which mode you&rsquo;re in. The prompt is coloured <span style="color: var(--prompt)">green</span> in the blocks. When pasting into a real terminal, strip the prompt prefix from each line.</div>
 
 <nav class="toc">
 <h2>Contents</h2>
@@ -170,18 +179,17 @@
 
 <h2 id="topology">4. Topology and addressing</h2>
 
-<pre><code>   HQ-Server                                                              Branch-PC
-   10.1.10.100 ----(Fa0)---- HQ-Router ====== ISP-Edge ====== Branch-Router ----(Fa0)---- 172.16.10.50
-                             Gig0/0/0           |              Gig0/0/0
-                             10.1.10.1/24       |              172.16.10.1/24
-                                                |
-                                                Gig0/0/2
-                                                203.0.113.100/24
-                                                     |
-                                                  Rogue Attacker PC
-                                                  203.0.113.50/24
-</code></pre>
+<figure>
+<img src="topology.png" alt="Lab topology: HQ-Server to HQ-Router across ISP-Edge to Branch-Router to Branch-PC, with rogue attacker on the ISP public segment">
+<figcaption>Lab topology</figcaption>
+</figure>
 
+<figure>
+<img src="ip_addressing.png" alt="IP addressing table showing all devices, interfaces, IP addresses, and network context roles">
+<figcaption>IP addressing plan</figcaption>
+</figure>
+
+<p>Same addressing in plain text for quick copy-paste reference:</p>
 <table>
 <thead><tr><th>Device</th><th>Interface</th><th>IP / Mask</th><th>Role</th></tr></thead>
 <tbody>
@@ -208,96 +216,94 @@
 <h3>Step 1: Base interface configuration</h3>
 
 <p><strong>HQ-Router:</strong></p>
-<pre><code>enable
-configure terminal
-hostname HQ-Router
-interface GigabitEthernet0/0/0
- description LAN to HQ-Server
- ip address 10.1.10.1 255.255.255.0
- no shutdown
- exit
-interface GigabitEthernet0/0/1
- description WAN to ISP-Edge
- ip address 198.51.100.2 255.255.255.252
- no shutdown
- exit
-ip route 0.0.0.0 0.0.0.0 198.51.100.1
-end
-copy running-config startup-config</code></pre>
+<pre><code><span class="p">Router&gt;</span> enable
+<span class="p">Router#</span> configure terminal
+<span class="p">Router(config)#</span> hostname HQ-Router
+<span class="p">HQ-Router(config)#</span> interface GigabitEthernet0/0/0
+<span class="p">HQ-Router(config-if)#</span> description LAN to HQ-Server
+<span class="p">HQ-Router(config-if)#</span> ip address 10.1.10.1 255.255.255.0
+<span class="p">HQ-Router(config-if)#</span> no shutdown
+<span class="p">HQ-Router(config-if)#</span> exit
+<span class="p">HQ-Router(config)#</span> interface GigabitEthernet0/0/1
+<span class="p">HQ-Router(config-if)#</span> description WAN to ISP-Edge
+<span class="p">HQ-Router(config-if)#</span> ip address 198.51.100.2 255.255.255.252
+<span class="p">HQ-Router(config-if)#</span> no shutdown
+<span class="p">HQ-Router(config-if)#</span> exit
+<span class="p">HQ-Router(config)#</span> ip route 0.0.0.0 0.0.0.0 198.51.100.1
+<span class="p">HQ-Router(config)#</span> end
+<span class="p">HQ-Router#</span> copy running-config startup-config</code></pre>
 
 <p><strong>Branch-Router:</strong></p>
-<pre><code>enable
-configure terminal
-hostname Branch-Router
-interface GigabitEthernet0/0/0
- description LAN to Branch-PC
- ip address 172.16.10.1 255.255.255.0
- no shutdown
- exit
-interface GigabitEthernet0/0/1
- description WAN to ISP-Edge
- ip address 203.0.113.2 255.255.255.252
- no shutdown
- exit
-ip route 0.0.0.0 0.0.0.0 203.0.113.1
-end
-copy running-config startup-config</code></pre>
+<pre><code><span class="p">Router&gt;</span> enable
+<span class="p">Router#</span> configure terminal
+<span class="p">Router(config)#</span> hostname Branch-Router
+<span class="p">Branch-Router(config)#</span> interface GigabitEthernet0/0/0
+<span class="p">Branch-Router(config-if)#</span> description LAN to Branch-PC
+<span class="p">Branch-Router(config-if)#</span> ip address 172.16.10.1 255.255.255.0
+<span class="p">Branch-Router(config-if)#</span> no shutdown
+<span class="p">Branch-Router(config-if)#</span> exit
+<span class="p">Branch-Router(config)#</span> interface GigabitEthernet0/0/1
+<span class="p">Branch-Router(config-if)#</span> description WAN to ISP-Edge
+<span class="p">Branch-Router(config-if)#</span> ip address 203.0.113.2 255.255.255.252
+<span class="p">Branch-Router(config-if)#</span> no shutdown
+<span class="p">Branch-Router(config-if)#</span> exit
+<span class="p">Branch-Router(config)#</span> ip route 0.0.0.0 0.0.0.0 203.0.113.1
+<span class="p">Branch-Router(config)#</span> end
+<span class="p">Branch-Router#</span> copy running-config startup-config</code></pre>
 
 <p><strong>ISP-Edge</strong> (missing from most tutorials; the WAN link does not work without it):</p>
-<pre><code>enable
-configure terminal
-hostname ISP-Edge
-interface GigabitEthernet0/0/0
- description Link to HQ-Router
- ip address 198.51.100.1 255.255.255.252
- no shutdown
- exit
-interface GigabitEthernet0/0/1
- description Link to Branch-Router
- ip address 203.0.113.1 255.255.255.252
- no shutdown
- exit
-interface GigabitEthernet0/0/2
- description Public segment with attacker host
- ip address 203.0.113.100 255.255.255.0
- no shutdown
- exit
-end
-copy running-config startup-config</code></pre>
+<pre><code><span class="p">Router&gt;</span> enable
+<span class="p">Router#</span> configure terminal
+<span class="p">Router(config)#</span> hostname ISP-Edge
+<span class="p">ISP-Edge(config)#</span> interface GigabitEthernet0/0/0
+<span class="p">ISP-Edge(config-if)#</span> description Link to HQ-Router
+<span class="p">ISP-Edge(config-if)#</span> ip address 198.51.100.1 255.255.255.252
+<span class="p">ISP-Edge(config-if)#</span> no shutdown
+<span class="p">ISP-Edge(config-if)#</span> exit
+<span class="p">ISP-Edge(config)#</span> interface GigabitEthernet0/0/1
+<span class="p">ISP-Edge(config-if)#</span> description Link to Branch-Router
+<span class="p">ISP-Edge(config-if)#</span> ip address 203.0.113.1 255.255.255.252
+<span class="p">ISP-Edge(config-if)#</span> no shutdown
+<span class="p">ISP-Edge(config-if)#</span> exit
+<span class="p">ISP-Edge(config)#</span> interface GigabitEthernet0/0/2
+<span class="p">ISP-Edge(config-if)#</span> description Public segment with attacker host
+<span class="p">ISP-Edge(config-if)#</span> ip address 203.0.113.100 255.255.255.0
+<span class="p">ISP-Edge(config-if)#</span> no shutdown
+<span class="p">ISP-Edge(config-if)#</span> exit
+<span class="p">ISP-Edge(config)#</span> end
+<span class="p">ISP-Edge#</span> copy running-config startup-config</code></pre>
 
 <p><strong>Verify Layer 3 before continuing:</strong></p>
-<ul>
-<li>From HQ-Router: <code>ping 198.51.100.1</code> must succeed.</li>
-<li>From Branch-Router: <code>ping 203.0.113.1</code> must succeed.</li>
-<li>From HQ-Router: <code>ping 203.0.113.2</code> must succeed (through ISP-Edge).</li>
-<li>End hosts cannot ping each other yet (private subnets have no public route on ISP-Edge). This is expected.</li>
-</ul>
+<pre><code><span class="p">HQ-Router#</span> ping 198.51.100.1
+<span class="p">Branch-Router#</span> ping 203.0.113.1
+<span class="p">HQ-Router#</span> ping 203.0.113.2</code></pre>
+<p>All three must succeed. End hosts cannot ping each other yet (private subnets have no public route on ISP-Edge). This is expected and will be solved by the IPsec tunnel in later steps.</p>
 
 <h3>Step 2: IKE Phase 1 (ISAKMP control-plane tunnel)</h3>
 
 <p><strong>HQ-Router:</strong></p>
-<pre><code>configure terminal
-crypto isakmp policy 10
- encryption aes 256
- hash sha
- authentication pre-share
- group 5
- lifetime 86400
- exit
-crypto isakmp key SecretKey123 address 203.0.113.2
-end</code></pre>
+<pre><code><span class="p">HQ-Router#</span> configure terminal
+<span class="p">HQ-Router(config)#</span> crypto isakmp policy 10
+<span class="p">HQ-Router(config-isakmp)#</span> encryption aes 256
+<span class="p">HQ-Router(config-isakmp)#</span> hash sha
+<span class="p">HQ-Router(config-isakmp)#</span> authentication pre-share
+<span class="p">HQ-Router(config-isakmp)#</span> group 5
+<span class="p">HQ-Router(config-isakmp)#</span> lifetime 86400
+<span class="p">HQ-Router(config-isakmp)#</span> exit
+<span class="p">HQ-Router(config)#</span> crypto isakmp key SecretKey123 address 203.0.113.2
+<span class="p">HQ-Router(config)#</span> end</code></pre>
 
 <p><strong>Branch-Router</strong> (policy numbers and parameters MUST match or Phase 1 fails):</p>
-<pre><code>configure terminal
-crypto isakmp policy 10
- encryption aes 256
- hash sha
- authentication pre-share
- group 5
- lifetime 86400
- exit
-crypto isakmp key SecretKey123 address 198.51.100.2
-end</code></pre>
+<pre><code><span class="p">Branch-Router#</span> configure terminal
+<span class="p">Branch-Router(config)#</span> crypto isakmp policy 10
+<span class="p">Branch-Router(config-isakmp)#</span> encryption aes 256
+<span class="p">Branch-Router(config-isakmp)#</span> hash sha
+<span class="p">Branch-Router(config-isakmp)#</span> authentication pre-share
+<span class="p">Branch-Router(config-isakmp)#</span> group 5
+<span class="p">Branch-Router(config-isakmp)#</span> lifetime 86400
+<span class="p">Branch-Router(config-isakmp)#</span> exit
+<span class="p">Branch-Router(config)#</span> crypto isakmp key SecretKey123 address 198.51.100.2
+<span class="p">Branch-Router(config)#</span> end</code></pre>
 
 <p><strong>Parameter cheat sheet:</strong></p>
 <table>
@@ -316,60 +322,62 @@ end</code></pre>
 <p>Define which traffic triggers the tunnel. The two ACLs must mirror each other.</p>
 
 <p><strong>HQ-Router:</strong></p>
-<pre><code>configure terminal
-access-list 100 permit ip 10.1.10.0 0.0.0.255 172.16.10.0 0.0.0.255
-end</code></pre>
+<pre><code><span class="p">HQ-Router#</span> configure terminal
+<span class="p">HQ-Router(config)#</span> access-list 100 permit ip 10.1.10.0 0.0.0.255 172.16.10.0 0.0.0.255
+<span class="p">HQ-Router(config)#</span> end</code></pre>
 
 <p><strong>Branch-Router:</strong></p>
-<pre><code>configure terminal
-access-list 100 permit ip 172.16.10.0 0.0.0.255 10.1.10.0 0.0.0.255
-end</code></pre>
+<pre><code><span class="p">Branch-Router#</span> configure terminal
+<span class="p">Branch-Router(config)#</span> access-list 100 permit ip 172.16.10.0 0.0.0.255 10.1.10.0 0.0.0.255
+<span class="p">Branch-Router(config)#</span> end</code></pre>
 
 <h3>Step 4: IKE Phase 2 (IPsec data-plane tunnel)</h3>
 <p>Both routers must use the SAME transform-set algorithms. Pick one combo and stick with it on both ends.</p>
 
 <p><strong>HQ-Router:</strong></p>
-<pre><code>configure terminal
-crypto ipsec transform-set TS-SET esp-aes 256 esp-sha-hmac
-crypto map VPN-MAP 10 ipsec-isakmp
- set peer 203.0.113.2
- set transform-set TS-SET
- match address 100
- exit
-interface GigabitEthernet0/0/1
- crypto map VPN-MAP
- exit
-end</code></pre>
+<pre><code><span class="p">HQ-Router#</span> configure terminal
+<span class="p">HQ-Router(config)#</span> crypto ipsec transform-set TS-SET esp-aes 256 esp-sha-hmac
+<span class="p">HQ-Router(cfg-crypto-trans)#</span> exit
+<span class="p">HQ-Router(config)#</span> crypto map VPN-MAP 10 ipsec-isakmp
+<span class="p">HQ-Router(config-crypto-map)#</span> set peer 203.0.113.2
+<span class="p">HQ-Router(config-crypto-map)#</span> set transform-set TS-SET
+<span class="p">HQ-Router(config-crypto-map)#</span> match address 100
+<span class="p">HQ-Router(config-crypto-map)#</span> exit
+<span class="p">HQ-Router(config)#</span> interface GigabitEthernet0/0/1
+<span class="p">HQ-Router(config-if)#</span> crypto map VPN-MAP
+<span class="p">HQ-Router(config-if)#</span> exit
+<span class="p">HQ-Router(config)#</span> end</code></pre>
 
 <p><strong>Branch-Router:</strong></p>
-<pre><code>configure terminal
-crypto ipsec transform-set TS-SET esp-aes 256 esp-sha-hmac
-crypto map VPN-MAP 10 ipsec-isakmp
- set peer 198.51.100.2
- set transform-set TS-SET
- match address 100
- exit
-interface GigabitEthernet0/0/1
- crypto map VPN-MAP
- exit
-end</code></pre>
+<pre><code><span class="p">Branch-Router#</span> configure terminal
+<span class="p">Branch-Router(config)#</span> crypto ipsec transform-set TS-SET esp-aes 256 esp-sha-hmac
+<span class="p">Branch-Router(cfg-crypto-trans)#</span> exit
+<span class="p">Branch-Router(config)#</span> crypto map VPN-MAP 10 ipsec-isakmp
+<span class="p">Branch-Router(config-crypto-map)#</span> set peer 198.51.100.2
+<span class="p">Branch-Router(config-crypto-map)#</span> set transform-set TS-SET
+<span class="p">Branch-Router(config-crypto-map)#</span> match address 100
+<span class="p">Branch-Router(config-crypto-map)#</span> exit
+<span class="p">Branch-Router(config)#</span> interface GigabitEthernet0/0/1
+<span class="p">Branch-Router(config-if)#</span> crypto map VPN-MAP
+<span class="p">Branch-Router(config-if)#</span> exit
+<span class="p">Branch-Router(config)#</span> end</code></pre>
 
 <div class="note">
-<strong>Note:</strong> Expect to see the console log <code>%CRYPTO-6-ISAKMP_ON_OFF: ISAKMP is ON</code> right after <code>crypto map</code> is applied. If you do not, re-check that the map name is spelled identically.
+<strong>Note:</strong> Expect to see the console log <code>%CRYPTO-6-ISAKMP_ON_OFF: ISAKMP is ON</code> right after <code>crypto map</code> is applied. If you do not, re-check that the map name is spelled identically on both routers.
 </div>
 
 <h3>Step 5: Trigger the tunnel and verify</h3>
-<p>The tunnel is dormant until interesting traffic arrives. From Branch-PC:</p>
-<pre><code>ping 10.1.10.100</code></pre>
+<p>The tunnel is dormant until interesting traffic arrives. From Branch-PC command prompt:</p>
+<pre><code><span class="p">C:\&gt;</span> ping 10.1.10.100</code></pre>
 <p>First one or two ICMP replies will time out (SAs are being negotiated). Subsequent pings should return.</p>
 
 <p><strong>Validate Phase 1 on either router:</strong></p>
-<pre><code>show crypto isakmp sa</code></pre>
+<pre><code><span class="p">HQ-Router#</span> show crypto isakmp sa</code></pre>
 <p>Expected: a line with <code>QM_IDLE</code> state and the two peer IPs. <code>QM_IDLE</code> means Phase 1 is up and resting.</p>
 
 <p><strong>Validate Phase 2:</strong></p>
-<pre><code>show crypto ipsec sa</code></pre>
-<p>Expected:</p>
+<pre><code><span class="p">HQ-Router#</span> show crypto ipsec sa</code></pre>
+<p>Expected (fragments shown):</p>
 <pre><code>    #pkts encaps: N, #pkts encrypt: N, #pkts digest: N
     #pkts decaps: N, #pkts decrypt: N, #pkts verify: N</code></pre>
 <p>Both counters increase as traffic flows. <code>encaps</code>/<code>encrypt</code> matching on one side and <code>decaps</code>/<code>decrypt</code> matching on the other confirms end-to-end ESP.</p>
@@ -436,19 +444,18 @@ end</code></pre>
 </table>
 
 <h2 id="rollback">10. Rollback</h2>
-<p>To cleanly remove the VPN without touching base routing:</p>
-<pre><code>configure terminal
-interface GigabitEthernet0/0/1
- no crypto map VPN-MAP
- exit
-no crypto map VPN-MAP 10
-no crypto ipsec transform-set TS-SET
-no access-list 100
-no crypto isakmp key SecretKey123 address &lt;peer-ip&gt;
-no crypto isakmp policy 10
-end
-copy running-config startup-config</code></pre>
-<p>Apply on both HQ-Router and Branch-Router. Base interfaces and default routes remain intact.</p>
+<p>To cleanly remove the VPN without touching base routing. Apply on both HQ-Router and Branch-Router (adjust the peer IP for each). Base interfaces and default routes remain intact.</p>
+<pre><code><span class="p">HQ-Router#</span> configure terminal
+<span class="p">HQ-Router(config)#</span> interface GigabitEthernet0/0/1
+<span class="p">HQ-Router(config-if)#</span> no crypto map VPN-MAP
+<span class="p">HQ-Router(config-if)#</span> exit
+<span class="p">HQ-Router(config)#</span> no crypto map VPN-MAP 10
+<span class="p">HQ-Router(config)#</span> no crypto ipsec transform-set TS-SET
+<span class="p">HQ-Router(config)#</span> no access-list 100
+<span class="p">HQ-Router(config)#</span> no crypto isakmp key SecretKey123 address 203.0.113.2
+<span class="p">HQ-Router(config)#</span> no crypto isakmp policy 10
+<span class="p">HQ-Router(config)#</span> end
+<span class="p">HQ-Router#</span> copy running-config startup-config</code></pre>
 
 <h2 id="sources">11. Sources</h2>
 <ul>
@@ -459,7 +466,7 @@ copy running-config startup-config</code></pre>
 </ul>
 
 <hr>
-<p style="text-align: center; color: var(--muted); font-size: 0.9em;">End of SOP &middot; Version 1.0 &middot; 2026-10-18</p>
+<p style="text-align: center; color: var(--muted); font-size: 0.9em;">End of SOP &middot; Version 1.1 &middot; 2026-10-18</p>
 
 </main>
 <script>
