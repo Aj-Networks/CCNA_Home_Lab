@@ -4,37 +4,48 @@ Personal CCNA 200-301 exam preparation lab. Built on physical hardware (same dev
 
 ## Purpose
 
-Each topic lives in its own numbered folder at the root of this repo. One folder, one topic, one writeup. No jumping between separate notes, labs, and diagram trees. Everything about a topic is in that topic's folder.
+Hands-on CCNA practice, published so other learners can follow along. Each lab is self-contained in its own folder with a writeup, topology, and (where applicable) a rebuilt Packet Tracer file.
 
-## Structure
+## Where to start
+
+The entire learning content lives under [`labs/`](labs/). Two subtrees:
+
+- **[labs/cisco/](labs/cisco/)** — labs that mirror Cisco NetAcad curriculum topics (ITN, SRWE, ENSA). Topology and lab names follow Cisco's scheme. Packet Tracer files are rebuilt from scratch; no Cisco-authored files are redistributed.
+- **[labs/custom/](labs/custom/)** — original labs: my own topologies, production-inspired scenarios, troubleshooting puzzles.
+
+See [`labs/README.md`](labs/README.md) for the full navigation guide and how each lab folder is structured.
+
+## Repo layout
 
 ```
-├── 00-template-topic/            # Copy this folder to start a new topic
-│   └── README.md
-├── NN-topic-slug/                # One per lab or concept
-│   ├── README.md                 # Writeup: concept, lab, sources, comments, lessons
-│   ├── topology.drawio           # Optional: your own topology source
-│   ├── topology.svg              # Optional: exported diagram
-│   ├── lab.pka                   # Optional: your own Packet Tracer file
-│   └── config-r1.txt             # Optional: config snippets or screenshots
+├── labs/
+│   ├── 00-template/            # Copy this folder to start a new lab
+│   │   └── README.md
+│   ├── cisco/                  # Cisco curriculum rebuilds
+│   │   ├── README.md
+│   │   └── 30-site-to-site-ipsec-vpn/
+│   │       ├── README.md       # Writeup (GitHub renders this)
+│   │       ├── index.html      # Standalone browser version
+│   │       ├── lab.pka         # Optional: my rebuilt Packet Tracer file
+│   │       └── topology.svg    # Optional: diagram
+│   └── custom/                 # Original labs (empty for now)
+│       └── README.md
 ├── docs/
-│   └── sync_audits/              # Repo reconciliation history
+│   └── sync_audits/            # Repo reconciliation history
 ├── LICENSE
-└── README.md
+├── README.md
+├── .gitattributes
+└── .gitignore
 ```
 
-## How to add a new topic
+## How to add a new lab
 
-1. Copy `00-template-topic/` to a new folder named `NN-topic-slug/` (two-digit number, hyphen, lowercase slug). Example: `11-ipv4-addressing/`.
-2. Fill in each section of its README.
-3. Drop related files (topology, PT file, config snippet, screenshots) directly inside the same folder.
-4. Commit with a short specific message, e.g. `add 11 ipv4-addressing lab writeup`.
-
-Note: `.pka`, `.pkt`, and other binary lab formats are globally ignored in [.gitignore](.gitignore). To publish your own `.pka` for a specific topic, add an exception line such as `!11-ipv4-addressing/lab.pka`.
-
-## Numbering convention
-
-Numbers follow Cisco NetAcad module order as a sort prefix only, not a deep hierarchy. Example: `11-ipv4-addressing`, `20-vpn-tunneling`. Familiar order, no replication of the full `1.1.1.5` scheme.
+1. Copy `labs/00-template/` to `labs/cisco/NN-topic-slug/` or `labs/custom/NN-topic-slug/`.
+2. Fill each section of the new `README.md` (What is this, Prerequisites, Topology, Steps, Verification, Sources, Comments, Lessons learned).
+3. Build the topology in Packet Tracer, save as `lab.pka` in the same folder. The `.gitignore` carves an exception for `lab.pka` under `labs/**` so it tracks.
+4. Export your diagram as `topology.svg`.
+5. (Optional) Generate `index.html` from the Markdown so a styled browser version is available.
+6. Commit with short, specific messages (one per logical change).
 
 ## Progress Tracking
 
@@ -42,7 +53,7 @@ Numbers follow Cisco NetAcad module order as a sort prefix only, not a deep hier
 |--------|---------|--------|
 | ITN (v7) | 1-17 | Not started |
 | SRWE (v7) | 1-16 | Not started |
-| ENSA (v7) | 1-12 | Not started |
+| ENSA (v7) | 1-12 | In progress (lab 30 writeup done) |
 
 ## Resources (Local Only)
 
